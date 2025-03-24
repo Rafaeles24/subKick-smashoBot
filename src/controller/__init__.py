@@ -1,2 +1,2 @@
-from .subscripcionController import getSubscripcion, createOrUpdateSub, desactivarSubscripcion
+from .subscripcionController import getSubscripcion, createOrUpdateSub, desactivarSubscripcion, setExpiredSubscripciones, getExpiredSubscripciones, getAllActiveSubscripciones, setRoleExpired
 from .subConfigController import getSubConfig, createOrUpdateConfig

@@ -2,15 +2,19 @@ import os
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
-from events.on_message import handle_message
+from events.setKickSub import setKickSub
+from events.expiredKickSub import expiredKickSub
 from command.test import commandTest
 from command.setChannel import commandSetChannel
 from command.setRole import commandSetRole
 from discord import app_commands
+from discord.ext import tasks
+import datetime
 
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
+GUILDID = os.getenv("DISCORD_GUILD_ID")
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix="!", intents=intents)
@@ -24,13 +28,19 @@ async def on_ready():
 
     try:
         synced = await client.tree.sync()
+        await verificarSubExpirado.start()
         print(f"[Slash commands] Slash Commands sincronizados: {len(synced)}")
     except Exception as e:
         print(f"Error al sincronizar comandos: {e}")
 
 @client.event
 async def on_message(message):
-    await handle_message(message)
+    await setKickSub(message)
+
+@tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
+async def verificarSubExpirado():
+    await expiredKickSub(client, int(GUILDID))
+
 
 @client.tree.command(name="test", description="Comando de prueba")
 async def test(interaction: discord.Integration):

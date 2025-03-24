@@ -1,1 +1,1 @@
-from .on_message import handle_message
+from .setKickSub import setKickSub
